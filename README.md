@@ -21,16 +21,25 @@ You will complete this lab by working in **your own fork** of the lab repository
 
 ## 📋 Lab Overview
 
-Implement comprehensive CI/CD best practices including testing, security, monitoring, and documentation to create a production-ready pipeline.
+n this lab, you will implement production-ready CI/CD pipelines using Terraform and GitHub Actions, following industry best practices for:
+Infrastructure as code
+Automated testing and validation
+Security and compliance
+Monitoring and auditing
+Documentation
+
 
 ## 🎯 Learning Objectives
 
-- Implement comprehensive testing in pipelines
-- Configure security scanning and compliance checks
-- Set up monitoring and alerting
-- Implement audit logging
-- Document CI/CD processes
-- Follow industry best practices
+By the end of this lab, you will be able to:
+
+Implement comprehensive CI/CD pipelines with multi-stage testing
+Configure security scanning and compliance checks
+Set up monitoring and observability for infrastructure changes
+Implement audit logging for all deployments
+Document CI/CD processes, runbooks, and architecture
+Follow industry best practices for infrastructure management
+
 
 ## 📁 Repository Structure
 
@@ -50,6 +59,103 @@ ce-lab-cicd-best-practices/
 ├── README.md
 └── .gitignore
 ```
+
+CI/CD Workflows
+
+Workflow	 |. Trigger	| Purpose
+CI Pipeline |	PR to main	|Run format checks, validate Terraform, security scan (tfsec), Terraform plan
+CD Pipeline| 	Push to main	| Plan + deploy with manual approval in production
+Commit Lint |	PR open/edit	| Ensure PR titles follow conventional commit standard
+Release Please	|Push to main	| Automated semantic versioning and changelog generation
+
+
+# Clone your fork
+git clone https://github.com/<your-github-username>/ce-lab-cicd-best-practices.git
+cd ce-lab-cicd-best-practices
+
+# Initialize Terraform
+cd terraform
+terraform init
+
+# Preview infrastructure changes
+terraform plan
+
+# Apply infrastructure (production approval required for CD)
+terraform apply
+
+
+
+
+## Architecture Overview 
+
+This repository manages shared infrastructure resources:
+S3 Bucket — Versioned artifact storage with server-side encryption, lifecycle policies, and public access block
+DynamoDB Table — Application state store with point-in-time recovery, encryption, and high availability
+
+
+
+
+## Contributing Guide  
+
+This repository follows Conventional Commits:
+
+type: short description
+
+Allowed Commit Types
+
+
+Type.  |	When to Use	|Example
+feat	   | New infrastructure resource	|feat: add CloudWatch alarm for DynamoDB
+fix	    |Bug fix or misconfiguration	| fix: correct S3 bucket policy permissions
+docs	     |Documentation only	   |docs: update architecture diagram
+chore	 |Maintenance, dependencies	| chore: update Terraform provider to 5.30
+refactor	  |Code restructuring, no behavior change	  |refactor: extract S3 config into module
+ci	     |CI/CD workflow changes	   |ci: add tfsec to PR checks
+test	     |Adding or updating tests	| test: add validation for DynamoDB schema
+
+
+## Pull Request Process
+
+- Create a feature branch: git checkout -b feat/your-feature
+- Make changes and commit with conventional messages
+- Push and open a PR: feature branch → main
+- CI pipeline runs automatically (must pass all checks)
+- Obtain at least one reviewer approval
+- Squash merge into main
+- CD pipeline runs with manual approval in production
+
+
+## CI Pipeline Checks
+Every PR must pass these before merging:
+
+- Terraform Format — terraform fmt -check
+- Terraform Validate — terraform validate
+- Security Scan — tfsec scans for misconfigurations
+- Terraform Plan — outputs posted as PR comment
+
+## Deployment
+Merges to main trigger CD pipeline:
+
+- Automatic terraform plan
+- Manual approval required in production environment
+- terraform apply executes after approval
+
+## Security & Compliance
+- Never commit .tfvars files with sensitive values
+- Use GitHub Secrets for AWS credentials
+-All S3 buckets must have encryption and public access block
+- DynamoDB tables must enable encryption and point-in-time recovery
+- Pipeline includes vulnerability and secret scanning, license compliance, and 
+code quality checks
+
+## Postmortem & Troubleshooting
+- Use docs/POSTMORTEM_TEMPLATE.md to document incidents
+- Include root cause, impact, timeline, and resolution
+- Maintain runbooks for common rollback scenarios (docs/RUNBOOK.md)
+
+
+
+
 
 ## ✅ Submission Requirements
 
