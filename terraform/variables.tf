@@ -3,6 +3,7 @@ variable "aws_region" {
   type        = string
   default     = "us-east-1"
 }
+# test ci pipeline
 
 variable "project_name" {
   description = "Project name used in resource naming"
