@@ -26,5 +26,3 @@ variable "team_name" {
   type        = string
   default     = "platform"
 }
-
-# test ci pipeline
