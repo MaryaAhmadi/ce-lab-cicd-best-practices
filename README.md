@@ -1,79 +1,159 @@
 # Lab M5.10 - CI/CD Best Practices Implementation
 
+https://github.com/MaryaAhmadi/ce-lab-cicd-best-practices.git
+
+
 **Cloud Engineering Bootcamp - Week 5, Day 5**  
 **Module:** Cloud Automation & CI/CD
 
-## Start Here: Fork, Clone, and Submit    
+---
 
-You will complete this lab by working in **your own fork** of the lab repository and submitting a **Pull Request (PR)**.
+## 📋 Overview
 
-1. **Fork the lab repository** to your GitHub account.
-2. **Clone your fork** locally:
-   ```bash
-   git clone https://github.com/<your-github-username>/ce-lab-cicd-best-practices.git
-   cd ce-lab-cicd-best-practices
-   ```
-3. **Follow all instructions below** and save your work in this repo (files, screenshots, and notes).
-4. **When finished, submit your work:**
-   - `git add` → `git commit` → `git push`
-   - Open a **Pull Request** from your fork back to the original lab repo
-   - Copy the **PR URL** and paste it into the **Lab Submission** field in the Student Portal
+This repository demonstrates a **production-grade CI/CD pipeline** for Infrastructure as Code using Terraform.
 
-## 📋 Lab Overview
+It provisions and manages shared cloud infrastructure resources while enforcing best practices such as:
 
-Implement comprehensive CI/CD best practices including testing, security, monitoring, and documentation to create a production-ready pipeline.
+- ✅ Automated testing and validation
+- 🔐 Security scanning
+- 📦 Semantic versioning and automated releases
+- 🚦 CI/CD pipelines with approval gates
+- 📖 Documentation and team conventions
 
-## 🎯 Learning Objectives
+---
 
-- Implement comprehensive testing in pipelines
-- Configure security scanning and compliance checks
-- Set up monitoring and alerting
-- Implement audit logging
-- Document CI/CD processes
-- Follow industry best practices
+## 🏗️ Architecture
 
-## 📁 Repository Structure
+This project manages the following AWS resources:
 
-```
-ce-lab-cicd-best-practices/
-├── .github/
-│   └── workflows/
-│       ├── comprehensive-ci.yml
-│       ├── security-scan.yml
-│       ├── compliance-check.yml
-│       └── monitoring.yml
-├── docs/
-│   ├── PIPELINE.md
-│   ├── SECURITY.md
-│   └── RUNBOOK.md
-├── tests/
-├── README.md
-└── .gitignore
-```
+### 🔹 S3 Bucket (Artifacts Storage)
+- Versioning enabled
+- Server-side encryption (AES256)
+- Lifecycle rules for cost optimization
+- Public access blocked
 
-## ✅ Submission Requirements
+### 🔹 DynamoDB Table (Application State)
+- PAY_PER_REQUEST billing
+- Point-in-time recovery enabled
+- Server-side encryption enabled
+- Composite primary key (PK, SK)
 
-1. **Comprehensive CI/CD Pipeline**
-   - Multi-stage testing (unit, integration, e2e)
-   - Security scanning (SAST, dependency check)
-   - Compliance validation
-   - Automated deployment
+---
 
-2. **Security Implementation**
-   - Vulnerability scanning
-   - Secret scanning
-   - Code quality checks
-   - License compliance
+## ⚙️ CI/CD Workflows
 
-3. **Monitoring & Observability**
-   - Pipeline metrics
-   - Deployment notifications
-   - Error alerting
+| Workflow | Trigger | Purpose |
+|----------|--------|--------|
+| **CI Pipeline** | Pull Request → `main` | Format, validate, security scan, plan |
+| **CD Pipeline** | Push → `main` | Plan + deploy with manual approval |
+| **Commit Lint** | PR open/edit | Enforce conventional commits |
+| **Release Please** | Push → `main` | Automated versioning and changelog |
 
-4. **Documentation**
-   - Pipeline architecture diagram
-   - Runbooks and troubleshooting guides
-   - Security and compliance documentation
+---
+
+## 🔍 CI Pipeline Stages
+
+The CI pipeline ensures code quality before deployment:
+
+1. **Terraform Format**
+   - Enforces consistent formatting
+
+2. **Terraform Validate**
+   - Checks syntax and configuration correctness
+
+3. **Security Scan (tfsec)**
+   - Detects misconfigurations and vulnerabilities
+
+4. **Terraform Plan**
+   - Shows infrastructure changes before deployment
+   - Automatically posted as a PR comment
+
+---
+
+## 🚀 CD Pipeline
+
+- Triggered after merge to `main`
+- Runs Terraform plan
+- Requires **manual approval** via GitHub Environment (`production`)
+- Executes Terraform apply after approval
+
+---
+
+## 🔐 Security Practices
+
+- No secrets stored in repository
+- AWS credentials managed via GitHub Secrets
+- S3 buckets:
+  - Encryption enabled
+  - Public access blocked
+- DynamoDB:
+  - Encryption enabled
+  - Point-in-time recovery enabled
+- tfsec used for static security analysis
+
+---
+
+## 📦 Versioning & Releases
+
+This repository uses:
+
+- **Conventional Commits**
+- **release-please**
+
+Features:
+- Automatic version bumping
+- Changelog generation
+- GitHub release creation
+
+Example:
+
+feat: add DynamoDB TTL support
+
+
+---
+
+## 🧪 Local Development
+
+Run Terraform locally:
+
+```bash
+cd terraform
+terraform init
+terraform plan
+terraform apply
+
+## Contributing
+See CONTRIBUTING.md for:
+Commit message conventions
+Pull request process
+CI/CD guidelines
+
+## 📄 Incident Management
+In case of deployment failures, use:
+👉 docs/POSTMORTEM_TEMPLATE.md
+This ensures:
+Root cause analysis
+Timeline tracking
+Continuous improvement
+
+## 📊 Repository Structure
+.
+├── .github/workflows/     # CI/CD pipelines
+├── terraform/             # Infrastructure as Code
+├── docs/                  # Documentation & postmortems
+├── CONTRIBUTING.md        # Team conventions
+├── README.md              # Project documentation
+├── CHANGELOG.md           # Auto-generated releases
+└── version.txt            # Version tracking
+
+
+## 🎯 Key Takeaways
+CI pipelines prevent broken infrastructure changes
+CD pipelines with approval gates reduce risk
+Conventional commits enable automation
+Documentation improves team collaboration
+Security should be integrated from day one
+
 
 ## 🎓 Grading Rubric
 
